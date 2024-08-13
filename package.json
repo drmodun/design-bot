@@ -1,0 +1,25 @@
+{
+  "name": "design-bot",
+  "version": "1.0.0",
+  "description": "Discord bot for designers",
+  "main": "index.js",
+  "repository": "git@github.com:drmodun/design-bot.git",
+  "author": "drmodun <jan.modun.st@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsx watch index.ts",
+    "build": "tsup src/index.ts -d dist/ --minify"
+  },
+  "dependencies": {
+    "axios": "^1.7.4",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "tsup": "^8.2.4",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4"
+  }
+}
