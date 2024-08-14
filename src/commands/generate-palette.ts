@@ -25,8 +25,8 @@ const colorsToFields = (colors: ColorResult[]): EmbedField[] =>
   });
 
 export const data = new SlashCommandBuilder()
-  .setName("palette")
-  .setDescription("Replies with a random palette")
+  .setName("palette-gen")
+  .setDescription("Replies with a random generated palette")
   .addStringOption((option) =>
     option
       .setName("count")
