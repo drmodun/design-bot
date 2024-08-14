@@ -12,9 +12,11 @@
     "build": "tsup src/index.ts -d dist/ --minify"
   },
   "dependencies": {
+    "@types/sharp": "^0.32.0",
     "axios": "^1.7.4",
     "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "sharp": "^0.33.4"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",

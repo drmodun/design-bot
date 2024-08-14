@@ -55,8 +55,8 @@ export interface ColorResultContrast {
 }
 
 export interface ColorResultImage {
-  bare: string;
-  named: string;
+  bare: URL;
+  named: URL;
 }
 
 export interface ColorResultLinks {
