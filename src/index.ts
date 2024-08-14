@@ -22,7 +22,6 @@ client.on("interactionCreate", async (interaction) => {
     const { commandName } = interaction;
 
     await commands[commandName as keyof typeof commands].execute(interaction); // Potentially replace with switch
-    console.log("sucess");
   } catch (e) {
     console.log(e);
   }

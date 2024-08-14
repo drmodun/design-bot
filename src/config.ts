@@ -10,5 +10,5 @@ if (!BOT_TOKEN || !CLIENT_ID) {
 
 export const config = {
   BOT_TOKEN,
-  CLIENT_ID,    
+  CLIENT_ID,
 };
