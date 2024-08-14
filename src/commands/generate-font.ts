@@ -1,7 +1,6 @@
 import {
   AttachmentBuilder,
   CommandInteraction,
-  Embed,
   SlashCommandBuilder,
 } from "discord.js";
 import { getFontData } from "../utils/getFontData";
@@ -9,6 +8,8 @@ import { CanvasRenderingContext2D, createCanvas } from "canvas";
 import { EmbedBuilder } from "@discordjs/builders";
 import opentype from "opentype.js";
 import { getNRandomFonts, getRegularFontLink } from "../api/googleFonts";
+import { getPngBuffer } from "../utils/getPngBuffer";
+import { getSvgBuffer } from "../utils/getSvgBuffer";
 
 export const data = new SlashCommandBuilder()
   .setName("font")
@@ -97,23 +98,21 @@ export async function execute(interaction: CommandInteraction) {
     const fonts = await Promise.all(fontsPromises);
 
     const paths = fonts.map((font) =>
-      font.getPath(text as string, 0, 200, 100)
+      font.getPath(text as string, 200, 200, 72).toSVG(2)
     );
 
     const embeds: EmbedBuilder[] = [];
     const attachments: AttachmentBuilder[] = [];
 
-    paths.forEach((path, index) => {
-      const canvas = createCanvas(300, 200);
-      const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+    const embedPromises = paths.map(async (path, index) => {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="700" height="250">
+      ${path}
+  </svg>`;
+      const svgBuffer = Buffer.from(svg);
 
-      ctx.strokeStyle = "white";
+      const image = await getPngBuffer(svgBuffer, 300, 200, 0);
 
-      (path as any).draw(ctx);
-
-      const buffer = canvas.toBuffer("image/png");
-
-      const attachment = new AttachmentBuilder(buffer);
+      const attachment = new AttachmentBuilder(image!);
 
       const randomColor: number = Math.floor(Math.random() * 16777215) + 1;
 
@@ -121,7 +120,7 @@ export async function execute(interaction: CommandInteraction) {
       const replyEmbed = new EmbedBuilder()
         .setTitle(`Font - ${fontQuery[index].family}`)
         .setDescription(
-          `Here is an example of the font ${fontQuery[index].family}, you can download itby clicking the title`
+          `Here is an example of the font ${fontQuery[index].family}, you can download it by clicking the title`
         ) // If index mismatches it will have to be fixed
         .setURL(getRegularFontLink(fontQuery[index]))
         .setColor(randomColor)
@@ -135,11 +134,20 @@ export async function execute(interaction: CommandInteraction) {
         })
         .setImage(`attachment://font${index}.png`);
 
+      console.log(replyEmbed);
+
       embeds.push(replyEmbed);
       attachments.push(attachment);
     });
 
     //Hate doing this but my hand is forced because their own types are wrong
+    await Promise.all(embedPromises);
+
+    if (embeds.length === 0) {
+      return interaction.reply(
+        "An error occurred due to bot or api issue, sorry for the inconvenience"
+      );
+    }
 
     return await interaction.reply({
       embeds: embeds,
