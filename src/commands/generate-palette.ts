@@ -97,7 +97,7 @@ export async function execute(interaction: CommandInteraction) {
       iconURL: "https://avatars.githubusercontent.com/u/132166057?v=4",
     });
 
-  return await interaction.channel?.send({
+  return await interaction.reply({
     embeds: [replyEmbed],
     files: [bareImagePngAttachment],
   });

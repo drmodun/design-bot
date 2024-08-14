@@ -1,24 +1,17 @@
-
-# Use an official Node.js runtime as the base image
-FROM node:18-alpine
-
-# Set the working directory in the container to /app
+FROM node:18-alpine AS build
+# This is exactly what you had before
 WORKDIR /app
-
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
-
-# Install production dependencies.
+COPY ./package.json ./package.json
 RUN yarn --ignore-engines
-
-# Copy the current directory contents into the container at /app
-COPY . .
-
-# Build the TypeScript
+COPY ./src ./src
+COPY ./tsconfig.json ./tsconfig.json
+COPY ./.env ./.env
 RUN yarn build
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
-
-# Run the app when the container launches
-CMD ["yarn", "start"]
+# Now build the actual image, starting over.
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=build /app/dist .
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/.env ./.env
+CMD ["node", "index.js"]
