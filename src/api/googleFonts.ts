@@ -6,7 +6,9 @@ const getFirstTenFonts = () => {
 
 export const getRegularFontLink = (font: any, mode?: string) => {
   return mode
-    ? font.files[mode] || font.files[Object.keys(font.files)[0]] || ""
+    ? font.files[mode.toLowerCase()] ||
+        font.files[Object.keys(font.files)[0]] ||
+        ""
     : font.files?.regular || font?.files[Object.keys(font.files)[0]] || "";
 };
 

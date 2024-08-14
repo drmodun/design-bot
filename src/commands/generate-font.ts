@@ -4,12 +4,10 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { getFontData } from "../utils/getFontData";
-import { CanvasRenderingContext2D, createCanvas } from "canvas";
 import { EmbedBuilder } from "@discordjs/builders";
 import opentype from "opentype.js";
 import { getNRandomFonts, getRegularFontLink } from "../api/googleFonts";
 import { getPngBuffer } from "../utils/getPngBuffer";
-import { getSvgBuffer } from "../utils/getSvgBuffer";
 
 export const data = new SlashCommandBuilder()
   .setName("font")
@@ -80,7 +78,7 @@ export async function execute(interaction: CommandInteraction) {
         interaction.options.get("font-mode")?.value?.toString() || "regular",
     });
 
-    const text = interaction.options.get("Text")?.value?.toString() || "Hello";
+    const text = interaction.options.get("text")?.value?.toString() || "Hello";
 
     const fontDataPromises = fontQuery.map((font) =>
       getFontData(getRegularFontLink(font))
@@ -134,8 +132,6 @@ export async function execute(interaction: CommandInteraction) {
         })
         .setImage(`attachment://font${index}.png`);
 
-      console.log(replyEmbed);
-
       embeds.push(replyEmbed);
       attachments.push(attachment);
     });
@@ -154,7 +150,6 @@ export async function execute(interaction: CommandInteraction) {
       files: attachments,
     });
   } catch (error) {
-    console.error(error);
     return interaction.reply(
       `An error occurred while fetching the palette, maybe your input params were wrong?`
     );
