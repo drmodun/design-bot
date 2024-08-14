@@ -399,4 +399,6 @@ FodyWeavers.xsd
 
 node_modules/
 
+dist/
+
 *.env

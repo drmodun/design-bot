@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import {
   BadRequestErrorResponse,
   ColorApiQuery,
@@ -11,20 +12,23 @@ export const getSchema = async (
   query: ColorApiQuery
 ): ApiCallReturnType<SchemeResult, Error> => {
   try {
-    const response: SchemeResult | BadRequestErrorResponse = await colorApi.get<
-      ColorApiQuery,
-      SchemeResult | BadRequestErrorResponse
-    >(`/scheme`, {
-      params: query,
-    });
+    const response: AxiosResponse<SchemeResult | BadRequestErrorResponse> =
+      await colorApi.get<
+        ColorApiQuery,
+        AxiosResponse<SchemeResult | BadRequestErrorResponse>
+      >(`/scheme`, {
+        params: query,
+      });
+
+    const data = response.data;
 
     // The server responds with a 200 code but sends back an error object so we need to manually detect if any error ocurred
 
-    if ("code" in response) {
-      throw new ColorsApiError(response);
+    if ("code" in data) {
+      throw new ColorsApiError(data);
     }
 
-    return [response as SchemeResult, null];
+    return [data as SchemeResult, null];
   } catch (error) {
     console.error(error);
 
