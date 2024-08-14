@@ -1,4 +1,4 @@
-import { formatTypeType, schemaModeType } from "./enums";
+import { schemaModeType } from "./enums";
 
 export interface ColorApiQuery {
   hex?: string;
@@ -7,7 +7,6 @@ export interface ColorApiQuery {
   cmyk?: string;
   mode?: schemaModeType;
   count?: number;
-  format?: formatTypeType;
 }
 
 export interface Fraction<FractionType> {
@@ -99,6 +98,7 @@ export interface SchemeLinks {
 export interface SchemeResult {
   mode: schemaModeType;
   count: number;
+  image: ColorResultImage;
   colors: ColorResult[];
   seed: ColorResult;
   _links: SchemeLinks;

@@ -9,7 +9,7 @@ import { colorApi } from "./base";
 
 export const getSchema = async (
   query: ColorApiQuery
-): ApiCallReturnType<SchemeResult> => {
+): ApiCallReturnType<SchemeResult, Error> => {
   try {
     const response: SchemeResult | BadRequestErrorResponse = await colorApi.get<
       ColorApiQuery,
