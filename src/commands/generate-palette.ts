@@ -1,4 +1,11 @@
-import { AttachmentBuilder, EmbedBuilder, EmbedField } from "discord.js";
+import {
+  ActionRowBuilder,
+  AttachmentBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  EmbedField,
+} from "discord.js";
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { ColorResult, schemaMode } from "../types";
 import { getSchema } from "../api/getRandomSchema";
@@ -39,7 +46,10 @@ export const data = new SlashCommandBuilder()
       .setRequired(false)
   );
 
-export async function execute(interaction: CommandInteraction) {
+export async function execute(
+  interaction: CommandInteraction,
+  action: string = "reply"
+) {
   const value = Math.floor(Math.random() * (max + 1));
   const hex = value.toString(16);
   const count = Number(interaction.options.get("count")?.value) || 5;
@@ -97,8 +107,48 @@ export async function execute(interaction: CommandInteraction) {
       iconURL: "https://avatars.githubusercontent.com/u/132166057?v=4",
     });
 
-  return await interaction.reply({
+  const regenerateButton = new ButtonBuilder()
+    .setCustomId("regenerate")
+    .setLabel("Regenerate")
+    .setStyle(ButtonStyle.Primary);
+
+  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    regenerateButton
+  );
+
+  const message = {
     embeds: [replyEmbed],
     files: [bareImagePngAttachment],
-  });
+    components: [row],
+  };
+
+  const response =
+    action === "reply"
+      ? await interaction.reply(message)
+      : await interaction.followUp(message);
+
+  const filter = (
+    i: any // Again no type info
+  ) => i.customId === "regenerate" && i.user.id === interaction.user.id;
+  try {
+    const regenerate = await response.awaitMessageComponent({
+      filter,
+    });
+
+    if (regenerate) {
+      regenerate.deferUpdate();
+      return execute(interaction, "followUp");
+    }
+
+    return response.edit({
+      components: [],
+      content: "You did not respond in time",
+    });
+  } catch (error) {
+    console.error(error);
+    return interaction.editReply({
+      content: "An error occurred while waiting for your response",
+      components: [],
+    });
+  }
 }

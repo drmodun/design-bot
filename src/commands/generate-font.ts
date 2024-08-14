@@ -1,6 +1,10 @@
 import {
+  ActionRowBuilder,
   AttachmentBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   CommandInteraction,
+  MessageType,
   SlashCommandBuilder,
 } from "discord.js";
 import { getFontData } from "../utils/getFontData";
@@ -67,7 +71,10 @@ export const data = new SlashCommandBuilder()
       ])
   );
 
-export async function execute(interaction: CommandInteraction) {
+export async function execute(
+  interaction: CommandInteraction,
+  mode: MessageType = MessageType.Reply
+) {
   try {
     const fontQuery = getNRandomFonts({
       n: Number(interaction.options.get("count")?.value) || 5,
@@ -145,10 +152,36 @@ export async function execute(interaction: CommandInteraction) {
       );
     }
 
-    return await interaction.reply({
+    const regenerateButton = new ButtonBuilder()
+      .setCustomId("regenerate")
+      .setLabel("Regenerate")
+      .setStyle(ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      regenerateButton
+    );
+
+    const message = {
       embeds: embeds,
       files: attachments,
+      components: [row],
+    };
+
+    const response =
+      mode === MessageType.Reply
+        ? await interaction.reply(message)
+        : await interaction.followUp(message);
+
+    const filter = (i: any) => i.user.id === interaction.user.id;
+
+    const regenerate = await response.awaitMessageComponent({
+      filter,
     });
+
+    if (regenerate) {
+      regenerate.deferUpdate();
+      return execute(interaction, MessageType.Default);
+    }
   } catch (error) {
     return interaction.reply(
       `An error occurred while fetching the palette, maybe your input params were wrong?`
