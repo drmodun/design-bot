@@ -114,7 +114,7 @@ export async function execute(
     });
 
     const regenerateButton = new ButtonBuilder()
-      .setCustomId("regenerate")
+      .setCustomId("regenerateRealPalette")
       .setLabel("Regenerate")
       .setStyle(ButtonStyle.Primary);
 
@@ -128,12 +128,13 @@ export async function execute(
     };
 
     const response =
-      action === MessageType.Reply
+      action == MessageType.Reply
         ? await interaction.reply(message)
         : await interaction.followUp(message);
 
     const filter = (i: any) =>
-      i.customId === "regenerate" && i.user.id === interaction.user.id;
+      i.customId === "regenerateRealPalette" &&
+      i.user.id === interaction.user.id;
 
     const regenerate = await response.awaitMessageComponent({
       filter, // Add timer later

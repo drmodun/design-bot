@@ -52,6 +52,11 @@ export async function execute(
 ) {
   const value = Math.floor(Math.random() * (max + 1));
   const hex = value.toString(16);
+
+  if (hex.length < 6) {
+    hex.padStart(6, "0".repeat(6 - hex.length));
+  }
+
   const count = Number(interaction.options.get("count")?.value) || 5;
 
   const [schema, error] = await getSchema({
@@ -108,7 +113,7 @@ export async function execute(
     });
 
   const regenerateButton = new ButtonBuilder()
-    .setCustomId("regenerate")
+    .setCustomId("regenerateGenPalette")
     .setLabel("Regenerate")
     .setStyle(ButtonStyle.Primary);
 
@@ -129,7 +134,8 @@ export async function execute(
 
   const filter = (
     i: any // Again no type info
-  ) => i.customId === "regenerate" && i.user.id === interaction.user.id;
+  ) =>
+    i.customId === "regenerateGenPalette" && i.user.id === interaction.user.id;
   try {
     const regenerate = await response.awaitMessageComponent({
       filter,

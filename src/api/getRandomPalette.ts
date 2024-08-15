@@ -16,29 +16,29 @@ export const getPalettes = async (
 
     switch (query.mode) {
       case "random":
-        url.href = `${baseUrl}/random&format=json`;
+        url.href = `${baseUrl}/random?format=json`;
         break;
       case "new":
-        url.href = `${baseUrl}/new&format=json`;
+        url.href = `${baseUrl}/new?format=json`;
         break;
       case "top":
-        url.href = `${baseUrl}/top&format=json`;
+        url.href = `${baseUrl}/top?format=json`;
         break;
       case "popular":
-        url.href = `${baseUrl}/&orderCol=numViews&sortBy=DESC&format=json`;
+        url.href = `${baseUrl}?orderCol=numViews&sortBy=DESC&format=json`;
         break;
       default:
-        url.href = `${baseUrl}/&format=json`;
+        url.href = `${baseUrl}?format=json`;
         break;
     }
 
-    console.log(url.href);
     url.searchParams.append("numResults", query.numResults?.toString() || "5");
-    url.searchParams.append("offset", query.offset?.toString() || "0");
+    url.searchParams.append("resultOffset", query.offset?.toString() || "0");
     url.searchParams.append("hex", query?.hex || "");
     url.searchParams.append("keywords", query?.keywords || "");
 
-    const response = await fetch(url);
+    console.log(url.href);
+    const response = await fetch(url.href);
 
     const data = await response.json();
 

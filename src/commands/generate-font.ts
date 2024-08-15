@@ -153,7 +153,7 @@ export async function execute(
     }
 
     const regenerateButton = new ButtonBuilder()
-      .setCustomId("regenerate")
+      .setCustomId("regenerateFont")
       .setLabel("Regenerate")
       .setStyle(ButtonStyle.Primary);
 
@@ -168,11 +168,12 @@ export async function execute(
     };
 
     const response =
-      mode === MessageType.Reply
+      mode == MessageType.Reply
         ? await interaction.reply(message)
         : await interaction.followUp(message);
 
-    const filter = (i: any) => i.user.id === interaction.user.id;
+    const filter = (i: any) =>
+      i.user.id === interaction.user.id && i.customId === "regenerateFont";
 
     const regenerate = await response.awaitMessageComponent({
       filter,
